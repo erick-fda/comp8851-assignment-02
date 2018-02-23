@@ -202,6 +202,30 @@ class BinarySearchTree
 
 	public:
 		/**
+			Returns the smallest value in the tree.
+		*/
+		const Comparable& findMin() const
+		{
+			if (isEmpty())
+			{
+				throw UnderflowException{};
+			}
+			return findMin(root)->element;
+		}
+
+		/**
+			Returns the largest value in the tree.
+		*/
+		const Comparable& findMax() const
+		{
+			if (isEmpty())
+			{
+				throw UnderflowException{};
+			}
+			return findMax(root)->element;
+		}
+
+		/**
 			Return whether the tree contains the given value.
 		*/
 		bool contains(const Comparable & x) const
@@ -384,6 +408,80 @@ class BinarySearchTree
 		}
 
 		/**
+			Returns the smallest value in the given subtree that is NOT marked for deletion.
+		*/
+		BinaryNode* findMin(BinaryNode* t) const
+		{
+			/* If this node is null, return nullptr. */
+			if (t == nullptr)
+			{
+				return nullptr;
+			}
+
+			/* Check for a valid minimum in lesser children. */
+			BinaryNode* minLeft = findMin(t->left);
+			if (minLeft != nullptr && 
+				!(minLeft->_isDeleted))
+			{
+				return minLeft;
+			}
+
+			/* Check if this node is a valid minimum. */
+			if (!(t->_isDeleted))
+			{
+				return t;
+			}
+
+			/* Check for a valid minimum in greater children. */
+			BinaryNode* minRight = findMin(t->right);
+			if (minRight != nullptr &&
+				!(minRight->_isDeleted))
+			{
+				return minRight;
+			}
+
+			/* If no valid minimums found in this branch, return nullptr. */
+			return nullptr;
+		}
+		
+		/**
+			Returns the largest value in the given subtree that is NOT marked for deletion.
+		*/
+		BinaryNode* findMax(BinaryNode* t) const
+		{
+			/* If this node is null, return nullptr. */
+			if (t == nullptr)
+			{
+				return nullptr;
+			}
+
+			/* Check for a valid maximum in greater children. */
+			BinaryNode* maxRight = findMax(t->right);
+			if (maxRight != nullptr &&
+				!(maxRight->_isDeleted))
+			{
+				return maxRight;
+			}
+
+			/* Check if this node is a valid minimum. */
+			if (!(t->_isDeleted))
+			{
+				return t;
+			}
+
+			/* Check for a valid maximum in lesser children. */
+			BinaryNode* maxLeft = findMax(t->left);
+			if (maxLeft != nullptr &&
+				!(maxLeft->_isDeleted))
+			{
+				return maxLeft;
+			}
+
+			/* If no valid maximums found in this branch, return nullptr. */
+			return nullptr;
+		}
+
+		/**
 			Check if a given item exists in a given subtree.
 		*/
 		bool contains(const Comparable & x, BinaryNode *t) const
@@ -404,8 +502,7 @@ class BinarySearchTree
 				return contains(x, t->right);
 			}
 			/*
-				If the item is neither null, lesser, nor greater, then this node is it.
-				
+				If the item is neither lesser nor greater, then this node is it.
 				Return FALSE if this node is marked for deletion and TRUE otherwise.
 			*/
 			else
@@ -452,8 +549,12 @@ class BinarySearchTree
 		BinaryNode* clone(BinaryNode *t) const
 		{
 			if (t == nullptr)
+			{
 				return nullptr;
+			}
 			else
+			{
 				return new BinaryNode{ t->element, clone(t->left), clone(t->right), t->_isDeleted };
+			}
 		}
 };
