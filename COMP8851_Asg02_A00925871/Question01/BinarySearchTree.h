@@ -127,7 +127,80 @@ class BinarySearchTree
 	/*----------------------------------------------------------------------------------------
 		Instance Methods
 	----------------------------------------------------------------------------------------*/
-    public:
+    private:
+		/**
+			Mark the given node as deleted and adjust relevant member values.
+		*/
+		void LazyDeleteNode(BinaryNode*& node)
+		{
+			if (nullptr != node && 
+				!(node->_isDeleted))
+			{
+				node->_isDeleted = true;
+				++_deletedNodeCount;
+			}
+		}
+
+		/**
+			Actually (not lazily) deletes all the nodes marked for deletion in the given subtree.
+		*/
+		void ClearDeletedNodesInSubtree(BinaryNode*& t)
+		{
+			/* If this node is null, do nothing. */
+			if (nullptr == t)
+			{
+				return;
+			}
+
+			/* If this node has a left subtree, clear it of deleted nodes. */
+			ClearDeletedNodesInSubtree(t->left);
+
+			/* If this node has a right subtree, clear it of deleted nodes. */
+			ClearDeletedNodesInSubtree(t->right);
+
+			/*
+				If this node is marked for deletion, delete it.
+				
+				Note that by this point in the method, this node is guaranteed 
+				to not have any children marked for deletion.
+			*/
+			if (t->_isDeleted)
+			{
+				/* If this node has two children... */
+				if (t->left != nullptr && t->right != nullptr) // Two children
+				{
+					BinaryNode* minRightNode = findMin(t->right);
+					t->element = minRightNode->element;
+					t->_isDeleted = false;
+					minRightNode->_isDeleted = true;
+
+					ClearDeletedNodesInSubtree(t->right);
+				}
+				/* If this node has one or no children... */
+				else
+				{
+					BinaryNode* oldNode = t;
+					t = (t->left != nullptr) ? t->left : t->right;
+					delete oldNode;
+					--_nodeCount;
+					--_deletedNodeCount;
+				}
+			}
+		}
+
+		/**
+			If more than half the nodes in the tree have been marked for deletion, 
+			deletes all such nodes.
+		*/
+		void TryLazyDelete()
+		{
+			if (_deletedNodeCount > (_nodeCount / 2))
+			{
+				ClearDeletedNodesInSubtree(root);
+			}
+		}
+
+	public:
 		/**
 			Return whether the tree contains the given value.
 		*/
@@ -189,6 +262,20 @@ class BinarySearchTree
 		void insert(Comparable && x)
 		{
 			insert(std::move(x), root);
+		}
+
+		/**
+			Removes the given value from the tree.
+			
+			Does nothing if the tree does not contain the given value.
+			
+			This method may trigger a lazy deletion if more than half of the tree's 
+			nodes have been marked for deletion after removing the given value.
+		*/
+		void remove(const Comparable & x)
+		{
+			remove(x, root);
+			TryLazyDelete();
 		}
 
     private:
@@ -263,6 +350,40 @@ class BinarySearchTree
 		}
 
 		/**
+			Removes the given value from the given subtree.
+		*/
+		void remove(const Comparable & x, BinaryNode * & t)
+		{
+			/*
+				If this node is null, then do nothing.
+			*/
+			if (t == nullptr)
+			{
+				return;   // Item not found; do nothing
+			}
+			/*
+				If the given value is lesser, remove from the left subtree.
+			*/
+			if (x < t->element)
+			{
+				remove(x, t->left);
+			}
+			/*
+				If the given value is greater, remove from the right subtree.
+			*/
+			else if (t->element < x)
+			{
+				remove(x, t->right);
+			}
+			/* If the node is not null, and the given value is neither lesser nor greater, 
+				then it is contained in this node. Mark this node for deletion. */
+			else
+			{
+				LazyDeleteNode(t);
+			}
+		}
+
+		/**
 			Check if a given item exists in a given subtree.
 		*/
 		bool contains(const Comparable & x, BinaryNode *t) const
@@ -302,7 +423,7 @@ class BinarySearchTree
 			{
 				makeEmpty(t->left);
 				makeEmpty(t->right);
-				DeleteNode(t);
+				LazyDeleteNode(t);
 			}
 		}
 
@@ -334,29 +455,5 @@ class BinarySearchTree
 				return nullptr;
 			else
 				return new BinaryNode{ t->element, clone(t->left), clone(t->right), t->_isDeleted };
-		}
-
-		/**
-			Mark the given node as deleted and adjust relevant member values.
-		*/
-		void DeleteNode(BinaryNode*& node)
-		{
-			if (nullptr != node)
-			{
-				node->_isDeleted = true;
-				++_deletedNodeCount;
-			}
-		}
-
-		/**
-			If more than half the nodes in the tree have been marked for deletion, 
-			deletes all such nodes.
-		*/
-		void TryLazyDelete()
-		{
-			if (_deletedNodeCount > (_nodeCount / 2))
-			{
-				// TODO delete
-			}
 		}
 };
