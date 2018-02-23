@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "dsexceptions.h"
 #include <algorithm>
+using namespace std;
 
 /*========================================================================================
 	BinarySearchTree	
@@ -128,6 +129,34 @@ class BinarySearchTree
 	----------------------------------------------------------------------------------------*/
     public:
 		/**
+			Return whether the tree contains the given value.
+		*/
+		bool contains(const Comparable & x) const
+		{
+			return contains(x, root);
+		}
+
+		/**
+			Return whether the tree is logically empty.
+		*/
+		bool isEmpty() const
+		{
+			return (root == nullptr || 
+					_deletedNodeCount >= _nodeCount );
+		}
+
+		/**
+			Prints the tree contents in sorted order.
+		*/
+		void printTree(ostream & out = cout) const
+		{
+			if (isEmpty())
+				out << "Empty tree" << endl;
+			else
+				printTree(root, out);
+		}
+
+		/**
 			Make the tree logically empty.
 		*/
 		void makeEmpty()
@@ -136,26 +165,7 @@ class BinarySearchTree
 			TryLazyDelete();
 		}
 
-		/**
-			Return whether the tree contains the given value.
-		*/
-		bool contains(const Comparable & x) const
-		{
-			return contains(x, root);
-		}
-
     private:
-		/**
-			Clone a subtree.
-		*/
-		BinaryNode* clone(BinaryNode *t) const
-		{
-			if (t == nullptr)
-				return nullptr;
-			else
-				return new BinaryNode{ t->element, clone(t->left), clone(t->right), t->_isDeleted };
-		}
-
 		/**
 			Check if a given item exists in a given subtree.
 		*/
@@ -198,6 +208,36 @@ class BinarySearchTree
 				makeEmpty(t->right);
 				DeleteNode(t);
 			}
+		}
+
+		/**
+			Print the contents of the given subtree in sorted order.
+		*/
+		void printTree(BinaryNode *t, ostream & out) const
+		{
+			if (t != nullptr)
+			{
+				printTree(t->left, out);
+
+				/* Print out the current node only if it is not marked for deletion. */
+				if (!(t->_isDeleted))
+				{
+					out << t->element << endl;
+				}
+
+				printTree(t->right, out);
+			}
+		}
+
+		/**
+			Clone a subtree.
+		*/
+		BinaryNode* clone(BinaryNode *t) const
+		{
+			if (t == nullptr)
+				return nullptr;
+			else
+				return new BinaryNode{ t->element, clone(t->left), clone(t->right), t->_isDeleted };
 		}
 
 		/**
