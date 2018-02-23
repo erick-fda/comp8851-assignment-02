@@ -46,7 +46,7 @@ class BinarySearchTree
 				: element{ theElement }, left{ lt }, right{ rt }, _isDeleted { d } { }
 
 			/* Pseudo-move constructor */
-			BinaryNode(Comparable && theElement, BinaryNode *lt, BinaryNode *rt)
+			BinaryNode(Comparable && theElement, BinaryNode *lt, BinaryNode *rt, bool d)
 				: element{ std::move(theElement) }, left{ lt }, right{ rt }, _isDeleted{ d } { }
 		};
 
@@ -165,7 +165,103 @@ class BinarySearchTree
 			TryLazyDelete();
 		}
 
+		/**
+			Insert the given lvalue into the tree.
+			
+			Duplicates are ignored.
+			
+			If a value already exists in the tree but is currently marked for deletion, 
+			the deletion flag will be removed.
+		*/
+		void insert(const Comparable & x)
+		{
+			insert(x, root);
+		}
+		
+		/**
+			Insert the given rvalue into the tree.
+			
+			Duplicates are ignored.
+			
+			If a value already exists in the tree but is currently marked for deletion, 
+			the deletion flag will be removed.
+		*/
+		void insert(Comparable && x)
+		{
+			insert(std::move(x), root);
+		}
+
     private:
+		/**
+			Inserts the given lvalue into the given subtree.
+		*/
+		void insert(const Comparable & x, BinaryNode * & t)
+		{
+			/* If this node is null, insert the new element here. */
+			if (t == nullptr)
+			{
+				t = new BinaryNode{ x, nullptr, nullptr, false };
+				++_nodeCount;
+			}
+			/* If the value is lesser, insert into the left subtree. */
+			else if (x < t->element)
+			{
+				insert(x, t->left);
+			}
+			/* If the value is greater, insert into the right subtree. */
+			else if (t->element < x)
+			{
+				insert(x, t->right);
+			}
+			/* If the value is stored in this node and 
+				the node has been marked for deletion, 
+				unmark it as such. */
+			else if (t->_isDeleted)
+			{
+				t->_isDeleted = false;
+				--_deletedNodeCount;
+			}
+			else
+			{
+				;  // Duplicate; do nothing
+			}
+		}
+
+		/**
+			Inserts the given lvalue into the given subtree.
+		*/
+		void insert(Comparable && x, BinaryNode * & t)
+		{
+			/* If this node is null, insert the new element here. */
+			if (t == nullptr)
+			{
+				t = new BinaryNode{ std::move(x), nullptr, nullptr, false };
+				++_nodeCount;
+			}
+			/* If the value is lesser, insert into the left subtree. */
+			else if (x < t->element)
+			{
+				insert(std::move(x), t->left);
+			}
+			/* If the value is greater, insert into the right subtree. */
+			else if (t->element < x)
+			{
+				insert(std::move(x), t->right);
+			}
+			/* If the value is stored in this node and 
+				the node has been marked for deletion, 
+				unmark it as such. */
+			else if (t->_isDeleted)
+			{
+				t->_isDeleted = false;
+				--_deletedNodeCount;
+			}
+			else
+			{
+				;  // Duplicate; do nothing
+			}
+		}
+
 		/**
 			Check if a given item exists in a given subtree.
 		*/
