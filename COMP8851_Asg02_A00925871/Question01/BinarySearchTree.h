@@ -18,9 +18,9 @@
 /*========================================================================================
 	Dependencies
 ========================================================================================*/
-#include "stdafx.h"
 #include "dsexceptions.h"
 #include <algorithm>
+using namespace std;
 
 /*========================================================================================
 	BinarySearchTree	
@@ -45,7 +45,7 @@ class BinarySearchTree
 				: element{ theElement }, left{ lt }, right{ rt }, _isDeleted { d } { }
 
 			/* Pseudo-move constructor */
-			BinaryNode(Comparable && theElement, BinaryNode *lt, BinaryNode *rt)
+			BinaryNode(Comparable && theElement, BinaryNode *lt, BinaryNode *rt, bool d)
 				: element{ std::move(theElement) }, left{ lt }, right{ rt }, _isDeleted{ d } { }
 		};
 
@@ -126,14 +126,102 @@ class BinarySearchTree
 	/*----------------------------------------------------------------------------------------
 		Instance Methods
 	----------------------------------------------------------------------------------------*/
-    public:
+    private:
 		/**
-			Make the tree logically empty.
+			Mark the given node as deleted and adjust relevant member values.
 		*/
-		void makeEmpty()
+		void LazyDeleteNode(BinaryNode*& node)
 		{
-			makeEmpty(root);
-			TryLazyDelete();
+			if (nullptr != node && 
+				!(node->_isDeleted))
+			{
+				node->_isDeleted = true;
+				++_deletedNodeCount;
+			}
+		}
+
+		/**
+			Actually (not lazily) deletes all the nodes marked for deletion in the given subtree.
+		*/
+		void ClearDeletedNodesInSubtree(BinaryNode*& t)
+		{
+			/* If this node is null, do nothing. */
+			if (nullptr == t)
+			{
+				return;
+			}
+
+			/* If this node has a left subtree, clear it of deleted nodes. */
+			ClearDeletedNodesInSubtree(t->left);
+
+			/* If this node has a right subtree, clear it of deleted nodes. */
+			ClearDeletedNodesInSubtree(t->right);
+
+			/*
+				If this node is marked for deletion, delete it.
+				
+				Note that by this point in the method, this node is guaranteed 
+				to not have any children marked for deletion.
+			*/
+			if (t->_isDeleted)
+			{
+				/* If this node has two children... */
+				if (t->left != nullptr && t->right != nullptr) // Two children
+				{
+					BinaryNode* minRightNode = findMin(t->right);
+					t->element = minRightNode->element;
+					t->_isDeleted = false;
+					minRightNode->_isDeleted = true;
+
+					ClearDeletedNodesInSubtree(t->right);
+				}
+				/* If this node has one or no children... */
+				else
+				{
+					BinaryNode* oldNode = t;
+					t = (t->left != nullptr) ? t->left : t->right;
+					delete oldNode;
+					--_nodeCount;
+					--_deletedNodeCount;
+				}
+			}
+		}
+
+		/**
+			If more than half the nodes in the tree have been marked for deletion, 
+			deletes all such nodes.
+		*/
+		void TryLazyDelete()
+		{
+			if (_deletedNodeCount > (_nodeCount / 2))
+			{
+				ClearDeletedNodesInSubtree(root);
+			}
+		}
+
+	public:
+		/**
+			Returns the smallest value in the tree.
+		*/
+		const Comparable& findMin() const
+		{
+			if (isEmpty())
+			{
+				throw UnderflowException{};
+			}
+			return findMin(root)->element;
+		}
+
+		/**
+			Returns the largest value in the tree.
+		*/
+		const Comparable& findMax() const
+		{
+			if (isEmpty())
+			{
+				throw UnderflowException{};
+			}
+			return findMax(root)->element;
 		}
 
 		/**
@@ -144,16 +232,252 @@ class BinarySearchTree
 			return contains(x, root);
 		}
 
+		/**
+			Return whether the tree is logically empty.
+		*/
+		bool isEmpty() const
+		{
+			return (root == nullptr || 
+					_deletedNodeCount >= _nodeCount );
+		}
+
+		/**
+			Prints the tree contents in sorted order.
+		*/
+		void printTree(ostream & out = cout) const
+		{
+			if (isEmpty())
+				out << "Empty tree" << endl;
+			else
+				printTree(root, out);
+		}
+
+		/**
+			Make the tree logically empty.
+		*/
+		void makeEmpty()
+		{
+			makeEmpty(root);
+			TryLazyDelete();
+		}
+
+		/**
+			Insert the given lvalue into the tree.
+			
+			Duplicates are ignored.
+			
+			If a value already exists in the tree but is currently marked for deletion, 
+			the deletion flag will be removed.
+		*/
+		void insert(const Comparable & x)
+		{
+			insert(x, root);
+		}
+		
+		/**
+			Insert the given rvalue into the tree.
+			
+			Duplicates are ignored.
+			
+			If a value already exists in the tree but is currently marked for deletion, 
+			the deletion flag will be removed.
+		*/
+		void insert(Comparable && x)
+		{
+			insert(std::move(x), root);
+		}
+
+		/**
+			Removes the given value from the tree.
+			
+			Does nothing if the tree does not contain the given value.
+			
+			This method may trigger a lazy deletion if more than half of the tree's 
+			nodes have been marked for deletion after removing the given value.
+		*/
+		void remove(const Comparable & x)
+		{
+			remove(x, root);
+			TryLazyDelete();
+		}
+
     private:
 		/**
-			Clone a subtree.
+			Inserts the given lvalue into the given subtree.
 		*/
-		BinaryNode* clone(BinaryNode *t) const
+		void insert(const Comparable & x, BinaryNode * & t)
 		{
+			/* If this node is null, insert the new element here. */
 			if (t == nullptr)
-				return nullptr;
+			{
+				t = new BinaryNode{ x, nullptr, nullptr, false };
+				++_nodeCount;
+			}
+			/* If the value is lesser, insert into the left subtree. */
+			else if (x < t->element)
+			{
+				insert(x, t->left);
+			}
+			/* If the value is greater, insert into the right subtree. */
+			else if (t->element < x)
+			{
+				insert(x, t->right);
+			}
+			/* If the value is stored in this node and 
+				the node has been marked for deletion, 
+				unmark it as such. */
+			else if (t->_isDeleted)
+			{
+				t->_isDeleted = false;
+				--_deletedNodeCount;
+			}
 			else
-				return new BinaryNode{ t->element, clone(t->left), clone(t->right), t->_isDeleted };
+			{
+				;  // Duplicate; do nothing
+			}
+		}
+
+		/**
+			Inserts the given lvalue into the given subtree.
+		*/
+		void insert(Comparable && x, BinaryNode * & t)
+		{
+			/* If this node is null, insert the new element here. */
+			if (t == nullptr)
+			{
+				t = new BinaryNode{ std::move(x), nullptr, nullptr, false };
+				++_nodeCount;
+			}
+			/* If the value is lesser, insert into the left subtree. */
+			else if (x < t->element)
+			{
+				insert(std::move(x), t->left);
+			}
+			/* If the value is greater, insert into the right subtree. */
+			else if (t->element < x)
+			{
+				insert(std::move(x), t->right);
+			}
+			/* If the value is stored in this node and 
+				the node has been marked for deletion, 
+				unmark it as such. */
+			else if (t->_isDeleted)
+			{
+				t->_isDeleted = false;
+				--_deletedNodeCount;
+			}
+			else
+			{
+				;  // Duplicate; do nothing
+			}
+		}
+
+		/**
+			Removes the given value from the given subtree.
+		*/
+		void remove(const Comparable & x, BinaryNode * & t)
+		{
+			/*
+				If this node is null, then do nothing.
+			*/
+			if (t == nullptr)
+			{
+				return;   // Item not found; do nothing
+			}
+			/*
+				If the given value is lesser, remove from the left subtree.
+			*/
+			if (x < t->element)
+			{
+				remove(x, t->left);
+			}
+			/*
+				If the given value is greater, remove from the right subtree.
+			*/
+			else if (t->element < x)
+			{
+				remove(x, t->right);
+			}
+			/* If the node is not null, and the given value is neither lesser nor greater, 
+				then it is contained in this node. Mark this node for deletion. */
+			else
+			{
+				LazyDeleteNode(t);
+			}
+		}
+
+		/**
+			Returns the smallest value in the given subtree that is NOT marked for deletion.
+		*/
+		BinaryNode* findMin(BinaryNode* t) const
+		{
+			/* If this node is null, return nullptr. */
+			if (t == nullptr)
+			{
+				return nullptr;
+			}
+
+			/* Check for a valid minimum in lesser children. */
+			BinaryNode* minLeft = findMin(t->left);
+			if (minLeft != nullptr && 
+				!(minLeft->_isDeleted))
+			{
+				return minLeft;
+			}
+
+			/* Check if this node is a valid minimum. */
+			if (!(t->_isDeleted))
+			{
+				return t;
+			}
+
+			/* Check for a valid minimum in greater children. */
+			BinaryNode* minRight = findMin(t->right);
+			if (minRight != nullptr &&
+				!(minRight->_isDeleted))
+			{
+				return minRight;
+			}
+
+			/* If no valid minimums found in this branch, return nullptr. */
+			return nullptr;
+		}
+		
+		/**
+			Returns the largest value in the given subtree that is NOT marked for deletion.
+		*/
+		BinaryNode* findMax(BinaryNode* t) const
+		{
+			/* If this node is null, return nullptr. */
+			if (t == nullptr)
+			{
+				return nullptr;
+			}
+
+			/* Check for a valid maximum in greater children. */
+			BinaryNode* maxRight = findMax(t->right);
+			if (maxRight != nullptr &&
+				!(maxRight->_isDeleted))
+			{
+				return maxRight;
+			}
+
+			/* Check if this node is a valid minimum. */
+			if (!(t->_isDeleted))
+			{
+				return t;
+			}
+
+			/* Check for a valid maximum in lesser children. */
+			BinaryNode* maxLeft = findMax(t->left);
+			if (maxLeft != nullptr &&
+				!(maxLeft->_isDeleted))
+			{
+				return maxLeft;
+			}
+
+			/* If no valid maximums found in this branch, return nullptr. */
+			return nullptr;
 		}
 
 		/**
@@ -177,8 +501,7 @@ class BinarySearchTree
 				return contains(x, t->right);
 			}
 			/*
-				If the item is neither null, lesser, nor greater, then this node is it.
-				
+				If the item is neither lesser nor greater, then this node is it.
 				Return FALSE if this node is marked for deletion and TRUE otherwise.
 			*/
 			else
@@ -196,31 +519,41 @@ class BinarySearchTree
 			{
 				makeEmpty(t->left);
 				makeEmpty(t->right);
-				DeleteNode(t);
+				LazyDeleteNode(t);
 			}
 		}
 
 		/**
-			Mark the given node as deleted and adjust relevant member values.
+			Print the contents of the given subtree in sorted order.
 		*/
-		void DeleteNode(BinaryNode*& node)
+		void printTree(BinaryNode *t, ostream & out) const
 		{
-			if (nullptr != node)
+			if (t != nullptr)
 			{
-				node->_isDeleted = true;
-				++_deletedNodeCount;
+				printTree(t->left, out);
+
+				/* Print out the current node only if it is not marked for deletion. */
+				if (!(t->_isDeleted))
+				{
+					out << t->element << endl;
+				}
+
+				printTree(t->right, out);
 			}
 		}
 
 		/**
-			If more than half the nodes in the tree have been marked for deletion, 
-			deletes all such nodes.
+			Clone a subtree.
 		*/
-		void TryLazyDelete()
+		BinaryNode* clone(BinaryNode *t) const
 		{
-			if (_deletedNodeCount > (_nodeCount / 2))
+			if (t == nullptr)
 			{
-				// TODO delete
+				return nullptr;
+			}
+			else
+			{
+				return new BinaryNode{ t->element, clone(t->left), clone(t->right), t->_isDeleted };
 			}
 		}
 };
