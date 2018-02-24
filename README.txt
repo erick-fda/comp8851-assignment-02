@@ -18,35 +18,35 @@
 ==========================================================================================
     ## Question Responses
 ==========================================================================================
-1.)
+1.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
         ./COMP8851_Asg02_A00925871/Question01/
 
-2.)
+2.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
         ./COMP8851_Asg02_A00925871/Question02/
 
-3.)
+3.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
         ./COMP8851_Asg02_A00925871/Question03/
 
-4.)
+4.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
         ./COMP8851_Asg02_A00925871/Question04/
 
-5.)
+5.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
         ./COMP8851_Asg02_A00925871/Question05/
 
-6.)
+6.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
         ./COMP8851_Asg02_A00925871/Question06/
 
-7.)
+7.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
         ./COMP8851_Asg02_A00925871/Question07/
 
-8.)
+8.) --------------------------------------------------------------------------------------
     a.)
         An O(N^2) algorithm for this problem would be to add every given number to every 
         other given number and see whether the result is K, returning true as soon as a 
@@ -60,8 +60,15 @@
         K-x exists in the array, returning true as soon as a match is found.
 
     c.)
-        The response to this question can be found at 
-        ./COMP8851_Asg02_A00925871/Question09/
+        My source code for this question can be found at 
+            ./COMP8851_Asg02_A00925871/Question09/
+
+        The executable at 
+
+            ./COMP8851_Asg02_A00925871/Debug/Question08.exe
+
+        can be run without parameters to demonstrate the timing of each solution 
+        (Warning: takes a while to run).
 
         N and K values are consts which can be modified in Question08.cpp.
         When the program is run, it will print the running time of each algorithm.
@@ -92,11 +99,20 @@
         algorithm may have a better *average* performance (thought a worse worst-case 
         performance).
         
-9.)
-    The response to this question can be found at 
-        ./COMP8851_Asg02_A00925871/Question09/
+9.) --------------------------------------------------------------------------------------
+    My source code for this question can be found at 
+            ./COMP8851_Asg02_A00925871/Question09/
 
-10.)
+    The executable at 
+
+        ./COMP8851_Asg02_A00925871/Debug/Question09.exe
+
+    can be run without parameters to demonstrate the proper topological sorting of the 
+    graph.
+
+    I've used the graph in Figure 9.4 in chapter 9 of the textbook for this question.
+
+10.) -------------------------------------------------------------------------------------
     This problem can be solved using a slightly modified form of what is known as the 
     Bellman-Ford algorithm as follows:
 
