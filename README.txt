@@ -59,6 +59,38 @@
         Then for each item x in the array, use a binary search to see whether K-x exists 
         in the array.
 
+    c.)
+        The response to this question can be found at 
+        ./COMP8851_Asg02_A00925871/Question09/
+
+        N and K values are consts which can be modified in Question08.cpp.
+        When the program is run, it will print the running time of each algorithm.
+
+        To ensure a worst-case scenario for these algorithm's performances, I have made 
+        them search for a third value "impossibleK", which will never be contained in the 
+        array because of how the contents are generated. Thus both algorithms must 
+        spend the maximum amount of checking. 
+        
+        Some sample running times are as follows:
+        
+        For N = 100,000:
+            O(N^2) = 34,536 ms
+            O(NlogN) = 177 ms
+
+        For N = 200,000:
+            O(N^2) = 148,064 ms
+            O(NlogN) = 368 ms
+
+        The sample running times reflect roughly the expected scaling for each algorithm.
+
+        It is worth noting that before ensuring a worst-case scenario with impossibleK, 
+        the O(N^2) solution was regularly outperforming the O(NlogN) solution. The former 
+        would tend to find a match quickly in the unsorted array, while the latter would 
+        spend a lot of time sorting.
+
+        This suggests that if there is a good chance of a match, the O(N^2) algorithm may 
+        have a better *average* performance (thought a worse worst-case performance).
+        
 9.)
     The response to this question can be found at 
         ./COMP8851_Asg02_A00925871/Question09/
