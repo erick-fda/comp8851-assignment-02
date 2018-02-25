@@ -46,9 +46,6 @@ class ChildSibTree
 
 			Thus, to traverse a node's children, one would follow node.child.sib.sib... and so 
 			on until sib is a nullptr, which means the end of node's children has been reached.
-
-			Realistically, this procedure would be defined in something like a ChildSibTree 
-			class, which would also contain the definition for ChildSibNode.
 		*/
 		void TraverseChildSibTree(ChildSibNode<Comparable>* node)
 		{

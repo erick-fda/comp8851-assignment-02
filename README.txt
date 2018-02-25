@@ -83,7 +83,8 @@
     c.)
         Worst case running time is O(NlogN). This is the same as for sorted input since 
         mergesort cannot benefit from sorted input without knowing in advance. For the 
-        same reason, the performance is not hurt in any way due to the input being random.
+        same reason, the performance is not hurt in any way due to the input being 
+        random.
 
 5.) --------------------------------------------------------------------------------------
     a.)
@@ -133,8 +134,7 @@
     swapped with other non-adjacent elements.
 
 7.) --------------------------------------------------------------------------------------
-    The response to this question can be found at 
-        ./COMP8851_Asg02_A00925871/Question07/
+    Couldn't figure this one out. Sorry!
 
 8.) --------------------------------------------------------------------------------------
     a.)
@@ -206,10 +206,10 @@
     This problem can be solved using a slightly modified form of what is known as the 
     Bellman-Ford algorithm as follows:
 
-    1) Begin with the description of the problem as an undirected graph, described as a 
-        list of V vertices and a list of E weighted edges. Each edge is described as a 
-        pair of adjacent vertices, X and Y, with a different weight depending on whether 
-        the edge is travelled from X to Y or from Y to X.
+    1) Begin by converting the given currencies and exchange rates into an undirected 
+        graph, described as a list of V vertices and a list of E weighted edges. Each 
+        edge is described as a pair of adjacent vertices, X and Y, with a different 
+        weight depending on whether the edge is travelled from X to Y or from Y to X.
         
         Each vertex represents a type of currency and each edge represents a currency 
         conversion. The weights are floating point numbers which represent the conversion 
