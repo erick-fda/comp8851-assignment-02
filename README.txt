@@ -72,8 +72,27 @@
     children of the root node by more than one.  
 
 4.) --------------------------------------------------------------------------------------
-    The response to this question can be found at 
-        ./COMP8851_Asg02_A00925871/Question04/
+    a.)
+        If the two input arrays to a mergesort are known to be sorted, then the mergesort 
+        will have a worst-case running time of O(N), since only one comparison is needed 
+        to sort each next item.
+
+    b.)
+        If the two input arrays to a mergesort are known to be reverse-sorted, then the 
+        worst-case running time will be O(N), just as with the normally sorted case. This 
+        is because the arrays can simply be read backwards, and otherwise the same 
+        process can be followed, with one comparison per item.
+
+    c.)
+        If the two input arrays are not known to be sorted, then mergesort will have a 
+        worst-case running time of O(NlogN), since the two arrays will first need to be 
+        sorted with an O(NlogN) algorithm before being merged.
+        
+        In such a case, mergesort would provide no worst-case improvement over merging 
+        the two arrays first and then sorting the combined array.
+        
+        Thus, mergesort is only an improvement over other sorting algorithms when the 
+        two input arrays are known to be either forward- or reverse-sorted to begin with.
 
 5.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
