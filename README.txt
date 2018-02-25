@@ -73,36 +73,36 @@
 
 4.) --------------------------------------------------------------------------------------
     a.)
-        If the two input arrays to a mergesort are known to be sorted, then the mergesort 
-        will have a worst-case running time of O(N), since only one comparison is needed 
-        to sort each next item.
+        Worst case running time is O(NlogN). Even if the input is pre-sorted, mergesort 
+        cannot benefit from this without knowing it in advance.
 
     b.)
-        If the two input arrays to a mergesort are known to be reverse-sorted, then the 
-        worst-case running time will be O(N), just as with the normally sorted case. This 
-        is because the arrays can simply be read backwards, and otherwise the same 
-        process can be followed, with one comparison per item.
+        Worst case running time is O(NlogN). Even if the input is pre-sorted, mergesort 
+        cannot benefit from this without knowing it in advance.
 
     c.)
-        If the two input arrays are not known to be sorted, then mergesort will have a 
-        worst-case running time of O(NlogN), since the two arrays will first need to be 
-        sorted with an O(NlogN) algorithm before being merged.
-        
-        In such a case, mergesort would provide no worst-case improvement over merging 
-        the two arrays first and then sorting the combined array.
-        
-        Thus, mergesort is only an improvement over other sorting algorithms when the 
-        two input arrays are known to be either forward- or reverse-sorted to begin with.
+        Worst case running time is O(NlogN). This is the same as for sorted input since 
+        mergesort cannot benefit from sorted input without knowing in advance. For the 
+        same reason, the performance is not hurt in any way due to the input being random.
 
 5.) --------------------------------------------------------------------------------------
     a.)
-        O(NlogN)
+        Worst-case running time is O(NlogN), since the median is guaranteed to be chosen 
+        as the pivot due to the median-of-three operation.
 
     b.)
-        O(NlogN)
+        Worst-case running time is O(NlogN), since the median is guaranteed to be chosen 
+        as the pivot due to the median-of-three operation.
 
     c.)
-        O(NlogN)
+        Worst-case running time is O(N^2), since there is a small chance that a maximum 
+        or minimum value is chosen as the pivot, leading to completely uneven partitions.
+
+        This might occur, for example, if there are three copies of the maximum value at 
+        the front, center, and back of the array that are selected for the 
+        median-of-three operation. In this and some similarly unlikely cases, an edge 
+        value would become the pivot, leading to uneven partitions and an O(N^2) running 
+        time.
 
 6.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
