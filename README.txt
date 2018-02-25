@@ -95,8 +95,14 @@
         two input arrays are known to be either forward- or reverse-sorted to begin with.
 
 5.) --------------------------------------------------------------------------------------
-    The response to this question can be found at 
-        ./COMP8851_Asg02_A00925871/Question05/
+    a.)
+        O(NlogN)
+
+    b.)
+        O(NlogN)
+
+    c.)
+        O(NlogN)
 
 6.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
