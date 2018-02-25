@@ -105,8 +105,32 @@
         time.
 
 6.) --------------------------------------------------------------------------------------
-    The response to this question can be found at 
-        ./COMP8851_Asg02_A00925871/Question06/
+    The following sorts are stable:
+        Insertion sort
+        Mergesort
+        Bucket sort
+        Radix sort
+
+    Insertion sort and radix sort are stable because they only move elements to the left 
+    when they are less than the elements to *their* left; equivalent elements are not 
+    swapped.
+    
+    Mergesort is stable because items from each of the two sub-lists are placed 
+    into the result array in order, thus avoiding uneccessary and unstable swapping.
+
+    Bucket sort is stable because items in buckets will be used to generate the result 
+    array in the same order that they were placed into the bucket, which will be the same 
+    order they were read from the original array in.
+
+    The following sorts are unstable:
+        Shellsort
+        Heapsort
+        Quicksort
+
+    All three of these sorts are unstable because they involve swapping the positions of 
+    elements which are distant from each other. This can easily result in equivalent 
+    elements being moved into a different order relative to each other due to being 
+    swapped with other non-adjacent elements.
 
 7.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
