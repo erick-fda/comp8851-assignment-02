@@ -27,8 +27,49 @@
         ./COMP8851_Asg02_A00925871/Question02/
 
 3.) --------------------------------------------------------------------------------------
-    The response to this question can be found at 
-        ./COMP8851_Asg02_A00925871/Question03/
+    To allow for finding the Kth item in the tree, each node should keep two int fields 
+    indicating its number of left and right children. To keep this value up-to-date, 
+    the recursive insert() and remove() methods should each return a boolean indicating 
+    whether a node was successfully added or removed. This boolean should propagate back 
+    up through the insert() or remove() call stack, and every node should either 
+    increment or decrement their appropriate child counter accordingly.
+
+    The findKth() method itself should work as follows:
+
+    Calling findKth(k) on the tree will call a private recursive method...
+        
+        BinaryNode& findKth(BinaryNode*& node, int k, int numSmaller)
+
+    with arguments...
+        
+        findKth(root, k, 0)
+
+
+    The private recursive method will be as follows:
+    
+    BinaryNode& findKth(BinaryNode*& node, int k, int numSmaller)
+    {
+        int numLeftChildrenRequired = (k - numSmaller - 1);
+
+        if (node.numLeftChildren == numLeftChildrenRequired) 
+        {
+            return node;
+        }
+        else if (node.numLeftChildren > numLeftChildrenRequired)
+        {
+            return findKth(node.leftChild, k, numSmaller);
+        }
+        else
+        {
+            return findKth(node.rightChild, k, (numSmaller + numLeftChildren + 1));
+        }
+    }
+
+    As a final note, the public findKth(k) method should obviously perform checking on k 
+    to ensure it is valid before calling the private recursive method. For example, it 
+    should ensure that k does not exceed the number of elements in the tree, which can be 
+    easily checked by ensuring it does not exceed the sum of the number of left and right 
+    children of the root node by more than one.  
 
 4.) --------------------------------------------------------------------------------------
     The response to this question can be found at 
