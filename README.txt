@@ -134,7 +134,58 @@
     swapped with other non-adjacent elements.
 
 7.) --------------------------------------------------------------------------------------
-    Couldn't figure this one out. Sorry!
+    To sort N fractions with numerators and denominators between 1 and N in linear time, 
+    the following algorithm can be used.
+
+    Say that for each fraction, we will call its numerator "X" and its denominator "Y". 
+    We will call the value (X - Y) for each fraction "Z". Now apply the following steps:
+
+    1) Make (2N - 1) buckets, as in bucket or radix sort. These buckets will represent 
+        the range from -(N-1) to (N-1), inclusive. 
+
+    2) Bucket sort into the buckets based on the Z of each fraction.
+
+    3) FOR EACH bucket...
+    {
+        IF the Z of this bucket is negative...
+        {
+            FOR EACH item in the bucket (left to right)...
+            {
+                IF there is an item to the left of this one and it has a higher denominator...
+                {
+                    Swap this item with the one to its left.
+                }
+                ELSE
+                {
+                    BREAK out of this loop. (i.e., move on the the next item in this bucket).
+                }
+            }
+        }
+        ELSE IF the Z of this bucket is positive...
+        {
+            FOR EACH item in the bucket (left to right)...
+            {
+                IF there is an item to the left of this one and it has a lower denominator...
+                {
+                    Swap this item with the one to its left.
+                }
+                ELSE
+                {
+                    BREAK out of this loop. (i.e., move on the the next item in this bucket).
+                }
+            }
+        }
+    }
+
+    4) Concatenate the buckets in order from left to right. The resulting array contains 
+        the sorted list of fractions.
+
+    The running time of a radix sort is O(p(N + b)), where p is the number of passes, N is 
+    the number of elements, and b is the number of buckets.
+
+    This algorithm is effectively a radix sort where p = (2) and b = (2N - 1). Thus its 
+    running time is O(2(N + (2n - 1))), or O(N). Thus this has a running time of O(N), 
+    linear time.
 
 8.) --------------------------------------------------------------------------------------
     a.)
