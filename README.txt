@@ -134,7 +134,15 @@
     swapped with other non-adjacent elements.
 
 7.) --------------------------------------------------------------------------------------
-    Couldn't figure this one out. Sorry!
+    To sort N fractions with numerators and denominators between 1 and N, you should 
+    first generate for each fraction an integer value using the following:
+
+    integerVal = numerator * N / denominator;
+
+    Then sort the fractions using a radix sort on their integerVals.
+
+    Both the generation of integerVals and the radix sort are O(N) operations, so the 
+    overall running time is O(N + N), or O(N), linear time.
 
 8.) --------------------------------------------------------------------------------------
     a.)
