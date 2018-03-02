@@ -27,8 +27,8 @@
         ./COMP8851_Asg02_A00925871/Question02/
 
 3.) --------------------------------------------------------------------------------------
-    To allow for finding the Kth item in the tree, each node should keep two int fields 
-    indicating its number of left and right children. To keep this value up-to-date, 
+    To allow for finding the Kth smallest item in the tree, each node should keep two int 
+    fields indicating its number of left and right children. To keep this value up-to-date, 
     the recursive insert() and remove() methods should each return a boolean indicating 
     whether a node was successfully added or removed. This boolean should propagate back 
     up through the insert() or remove() call stack, and every node should either 
@@ -69,7 +69,7 @@
     to ensure it is valid before calling the private recursive method. For example, it 
     should ensure that k does not exceed the number of elements in the tree, which can be 
     easily checked by ensuring it does not exceed the sum of the number of left and right 
-    children of the root node by more than one.  
+    children of the root node by more than one. K should also not be zero or less.
 
 4.) --------------------------------------------------------------------------------------
     a.)
@@ -134,7 +134,15 @@
     swapped with other non-adjacent elements.
 
 7.) --------------------------------------------------------------------------------------
-    Couldn't figure this one out. Sorry!
+    To sort N fractions with numerators and denominators between 1 and N, you should 
+    first generate for each fraction an integer value using the following:
+
+    integerVal = numerator * N / denominator;
+
+    Then sort the fractions using a radix sort on their integerVals.
+
+    Both the generation of integerVals and the radix sort are O(N) operations, so the 
+    overall running time is O(N + N), or O(N), linear time.
 
 8.) --------------------------------------------------------------------------------------
     a.)
